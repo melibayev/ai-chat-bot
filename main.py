@@ -15,13 +15,13 @@ load_dotenv()
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Load Telegram Bot Token and Gemini API key from environment variables
+# Telegram Bot Token and Gemini API key from .env variables
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-# Configure Gemini AI
+# Configuration Gemini AI
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-1.5-flash")  # Use the correct model
+model = genai.GenerativeModel("gemini-1.5-flash")
 
 # Path to store user data and admin info
 USERS_LOG_FILE = "users.json"
@@ -30,7 +30,6 @@ ADMIN_FILE = "admin.json"
 # Timezone for Tashkent
 TASHKENT_TZ = pytz.timezone("Asia/Tashkent")
 
-
 # Function to get the admin ID from the file
 def get_admin():
     if os.path.exists(ADMIN_FILE):
@@ -38,17 +37,15 @@ def get_admin():
             return json.load(file).get("admin_id")
     return None
 
-
 # Function to set the admin ID (only set once)
 def set_admin(user_id):
     if not os.path.exists(ADMIN_FILE):  # Set admin only once
         with open(ADMIN_FILE, "w") as file:
             json.dump({"admin_id": user_id}, file)
 
-
 # User logging function
 def log_user_data(user):
-    # Get the current time in the server's timezone and convert it to Tashkent time
+    # Get the current time in the server's timezone and convert it to Tashkent(depends on pytz option) time
     server_time = datetime.now()
     tashkent_time = server_time.astimezone(TASHKENT_TZ)
 
@@ -82,7 +79,6 @@ def log_user_data(user):
 
     except Exception as e:
         logger.error(f"Error logging user data: {e}")
-
 
 # Command to list users and total counts
 def list_users(update: Update, context: CallbackContext):
@@ -127,8 +123,7 @@ def list_users(update: Update, context: CallbackContext):
         logger.error(f"Error reading user log file: {e}")
         update.message.reply_text("⚠️ An error occurred while retrieving user data.")
 
-
-# Function to interact with Gemini AI
+# Function to interact with AI
 def chat_with_gemini(user_message: str) -> str:
     try:
         # Generate content based on user input
@@ -137,7 +132,6 @@ def chat_with_gemini(user_message: str) -> str:
     except Exception as e:
         logger.error(f"Error with Gemini AI request: {e}")
         return "Sorry, there was an error while processing your request."
-
 
 # Command to start the bot
 def start(update: Update, context: CallbackContext):
@@ -149,8 +143,9 @@ def start(update: Update, context: CallbackContext):
         set_admin(user.id)
         update.message.reply_text("👑 You have been set as the admin!")
     else:
-        update.message.reply_text("Hello! I'm your AI chatbot. How can I assist you today?")
-
+        update.message.reply_text("Hello! Welcome to the AI Chat Bot! 🤖\n\n"
+        "I’m here to assist you with any questions💬\n\n"
+        "Ready to chat? Let's get started! 😊")
 
 # Command to send statistics to the admin
 def stats(update: Update, context: CallbackContext):
@@ -194,7 +189,6 @@ def handle_message(update: Update, context: CallbackContext):
     # Send Gemini AI's response back to the user
     update.message.reply_text(ai_response)
 
-
 # Main function to run the bot
 def main():
     updater = Updater(TOKEN, use_context=True)
@@ -210,7 +204,6 @@ def main():
     updater.start_polling()
     logger.info("Bot is running...")
     updater.idle()
-
 
 # Run the bot
 if __name__ == "__main__":
