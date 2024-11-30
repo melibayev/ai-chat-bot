@@ -1,0 +1,20 @@
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.db
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# Users data
+users.json
+admin.json
+
+# Virtual environment
+.venv/
+venv/
